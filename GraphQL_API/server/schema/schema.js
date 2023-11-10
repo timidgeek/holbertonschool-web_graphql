@@ -19,5 +19,23 @@ const TaskType = new GraphQLObjectType({
 }
 });
 
+// create a new GraphQLObjectType: RootQuery
+const RootQuery = new GraphQLObjectType({
+  name: 'RootQueryType',
+  fields: {
+    task: {
+      type: TaskType,
+      args: {id: { type: GraphQLString }}, // finds task in GraphQL server
+      resolve(parent, args){
+        // code to get data from db / other source
+        // return task for testing purposes
+        return TaskType.findById(args.id);
+      }
+    },
+  }
+});
+
 // exports
-module.exports = TaskType;
+module.exports = new GraphQLSchema({
+  query: RootQuery
+});
