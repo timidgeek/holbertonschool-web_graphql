@@ -91,7 +91,7 @@ const RootQuery = new GraphQLObjectType({
         // code to get data from db / other source
         // use lodash's  `find` function to get tasks by id
         return _.find(tasks, { id: args.id });
-      }
+      },
     },
     project: {
       type: ProjectType,
@@ -100,6 +100,18 @@ const RootQuery = new GraphQLObjectType({
         // code to get data from db / other source
         // use lodash's  `find` function to get tasks by id
         return _.find(projects, { id: args.id });
+      }
+    },
+    tasks: {
+      type: new GraphQLList(TaskType),
+      resolve(parent, args){
+        return tasks
+      }
+    },
+    projects: {
+      type: new GraphQLList(ProjectType),
+      resolve(parent, args){
+        return projects
       }
     },
   }
