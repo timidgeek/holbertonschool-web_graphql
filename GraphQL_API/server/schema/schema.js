@@ -8,7 +8,8 @@ const {
   GraphQLObjectType, 
   GraphQLString, 
   GraphQLInt, 
-  GraphQLSchema
+  GraphQLSchema,
+  GraphQLID
  } = require('graphql');
 
  // tasks array with task data
@@ -27,16 +28,42 @@ const {
   }
 ]
 
+ // projects array with projects data
+ const projects = [
+  {
+    id: "1", 
+    title: 'Advanced HTML', 
+    weight: 1, 
+    description: 'Welcome to the Web Stack specialization. The 3 first projects will give you all basics of the Web development: HTML, CSS and Developer tools. In this project, you will learn how to use HTML tags to structure a web page. No CSS, no styling - don’t worry, the final page will be “ugly” it’s normal, it’s not the purpose of this project. Important note: details are important! lowercase vs uppercase / wrong letter… be careful!',
+  },
+  {
+    id: "2", 
+    title: 'Bootstrap', 
+    weight: 1, 
+    description: 'Bootstrap is a free and open-source CSS framework directed at responsive, mobile-first front-end web development. It contains CSS and JavaScript design templates for typography, forms, buttons, navigation, and other interface components.'
+  }
+]
 
-  // create a new GraphQLObjectType: TaskType
+// create a new GraphQLObjectType: TaskType
 const TaskType = new GraphQLObjectType({
   name: 'Task',
   fields: {  
-    id: { type: GraphQLString },  
+    id: { type: GraphQLID },  
     title: { type: GraphQLString },
     weight: { type: GraphQLInt },
     description: { type: GraphQLString }
 }
+});
+
+// create a new GraphQLObjectType: ProjectType
+const ProjectType = new GraphQLObjectType({
+  name: 'Project',
+  fields: {
+    id: { type: GraphQLID },  
+    title: { type: GraphQLString },
+    weight: { type: GraphQLInt },
+    description: { type: GraphQLString }
+  }
 });
 
 // create a new GraphQLObjectType: RootQuery
@@ -45,11 +72,20 @@ const RootQuery = new GraphQLObjectType({
   fields: {
     task: {
       type: TaskType,
-      args: {id: { type: GraphQLString }}, // finds task in GraphQL server
+      args: {id: { type: GraphQLID }}, // finds task in GraphQL server
       resolve(parent, args){
         // code to get data from db / other source
         // use lodash's  `find` function to get tasks by id
         return _.find(tasks, { id: args.id });
+      }
+    },
+    project: {
+      type: ProjectType,
+      args: {id: { type: GraphQLID }}, // finds task in GraphQL server
+      resolve(parent, args){
+        // code to get data from db / other source
+        // use lodash's  `find` function to get tasks by id
+        return _.find(projects, { id: args.id });
       }
     },
   }
