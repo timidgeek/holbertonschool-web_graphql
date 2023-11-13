@@ -122,7 +122,7 @@ const Mutation = new GraphQLObjectType({
           title: args.title,
           weight: args.weight,
           description: args.description,
-          projectId: args.project,
+          projectId: args.projectId,
         });
         return newTask.save();
       },
