@@ -1,5 +1,11 @@
 // schema file
 
+// import project model from mongoose 
+const ProjectModel = require('../models/project');
+
+// import task model from mongoose 
+const TaskModel = require('../models/task');
+
 // require the lodash module
 const _ = require('lodash');
 
@@ -10,7 +16,8 @@ const {
   GraphQLInt, 
   GraphQLSchema,
   GraphQLID,
-  GraphQLList
+  GraphQLList,
+  GraphQLNonNull
  } = require('graphql');
 
  // tasks array with task data
@@ -80,6 +87,48 @@ const ProjectType = new GraphQLObjectType({
   })
 });
 
+// create a new GraphQLObjectType Mutation
+const Mutation = new GraphQLObjectType({
+  name: 'Mutation',
+  fields: () => ({
+    addProject: {
+      type: ProjectType,
+      args: {
+        title: { type: new GraphQLNonNull(GraphQLString) },
+        weight: { type: new GraphQLNonNull(GraphQLInt) },
+        description: { type: new GraphQLNonNull(GraphQLString) },
+      },
+      resolve(parent, args){
+        // create new Project Model
+        const newProject = new ProjectModel({
+          title: args.title,
+          weight: args.weight,
+          description: args.description,
+        });
+        return newProject.save();
+      },
+    },
+    addTask: {
+      type: TaskType,
+      args: {
+        title: { type: new GraphQLNonNull(GraphQLString) },
+        weight: { type: new GraphQLNonNull(GraphQLInt) },
+        description: { type: new GraphQLNonNull(GraphQLString) },
+      },
+      resolve(parent, args){
+        // create new Task Model
+        const newTask = new TaskModel({
+          title: args.title,
+          weight: args.weight,
+          description: args.description,
+          projectId: args.project,
+        });
+        return newTask.save();
+      },
+    },
+  })
+});
+
 // create a new GraphQLObjectType: RootQuery
 const RootQuery = new GraphQLObjectType({
   name: 'RootQueryType',
@@ -119,5 +168,6 @@ const RootQuery = new GraphQLObjectType({
 
 // exports
 module.exports = new GraphQLSchema({
-  query: RootQuery
+  query: RootQuery,
+  mutation: Mutation,
 });
