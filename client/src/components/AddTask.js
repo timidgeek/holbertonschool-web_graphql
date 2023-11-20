@@ -1,5 +1,7 @@
 import { useState } from "react";
-import { getProjectsQuery } from "../queries/queries";
+import { graphql } from "react-apollo";
+import { flowRight as compose } from "lodash";
+import { getProjectsQuery, addTaskMutation, getTasksQuery } from "../queries/queries";
 
 function AddTask(props) {
   const [inputs, setInputs] = useState({
@@ -37,11 +39,24 @@ function AddTask(props) {
     }
   }
 
+  const submitForm = (e) => {
+    e.preventDefault();
+    props.addTaskMutation({
+      variables: {
+        title: inputs.title,
+        weight: inputs.weight,
+        description: inputs.description,
+        projectId: inputs.projectId
+      },
+      refetchQueries: [{ query: getTasksQuery }]
+    });
+  }
+
   return ( 
   <form 
     class = "task"
     id = "add-task"
-    onSubmit = {...}>
+    onSubmit = {submitForm}>
     <div className = "field">
       <label> Task title: </label> 
       <input type = "text"
@@ -103,4 +118,7 @@ function AddTask(props) {
   );
 }
 
-export default AddTask;
+export default compose(
+  graphql(getProjectsQuery, { name: "getProjectsQuery" }),
+  graphql(addTaskMutation, { name: "addTaskMutation" }),
+  )(AddTask);
