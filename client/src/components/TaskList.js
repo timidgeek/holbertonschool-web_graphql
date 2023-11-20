@@ -43,7 +43,7 @@ function displayTasks() {
       <ul id = "task-list">
         { displayTasks() }
       </ul>
-      <TaskDetails/> 
+      <TaskDetails taskId = {state.selected}/> 
     </div>
   );
 }
